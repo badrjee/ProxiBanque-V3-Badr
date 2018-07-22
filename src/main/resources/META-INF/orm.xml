@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<entity-mappings version="2.0"
+	xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+	
+	<!-- ********************** ENTITE CLIENT *********************** -->
+	<entity class="fr.gtm.projetv3.model.Client">
+		<table name="client" />
+		<attributes>
+
+			<id name="id">
+				<generated-value strategy="IDENTITY" />
+			</id>
+	
+			<basic name="numCl" />
+			<basic name="nom" />
+			<basic name="prenom" />
+			<basic name="dateNaissance" />
+
+			<!-- RELATION UNIDIRECTIONNELLE, L'ENTITE REFERENCE N'A PAS D'ATTRIBUT DE CET ENTITE.
+			<one-to-many name="comptes" ">
+				<join-column name="idClientCol" referenced-column-name="id"/>
+			</one-to-many>-->
+			
+			<!-- 
+				IMPORTANT: 
+					- RELATION BIDIRECTIONNELLE SIGNIFIE QUE 2 OBJECTS ON UN ATTRIBUT DE CHACUN L'UN DANS L'AUTRE.
+					- LES ATTRIBUTS SONT LOCALISE PAR HIBERNATE EN UTILISANT LA METHODE GET DE CHACUN.
+					
+				- MappedBy utilisé pour définir une relation bidirectionnelle 
+				- LA TABLE CLIENT POSSEDE UNE LISTE DE D'OBJET COMPTE ET L'OBJET COMPTE POSSEDE UN ATTRIBUT DE TYPE CLIENT
+				- L'ATTRIBUT <name="compte"> EST L'ATTRIBUT DE TYPE COMPTE DANS L'OBJET CLIENT ET MAPPED-BY EST
+				  L'ATTRIBUT DE <name=""> DANS LA RELATION MANY-TO-ONE DANS L'ENTITE COMPTE.
+			-->
+			
+			<!-- POUR NE PAS ETRE EN MODE LEAZY -->
+			<one-to-many name="comptes" mapped-by="client" fetch="EAGER">
+			</one-to-many>
+			
+			
+			<!-- 
+				- DANS L'OBJET CLIENT, IL Y A UN ATTRIBUT DE TYPE ADRESSE
+				  MAIS PAS D'ATTRIBUT DE TYPE CLIENT DANS LA L'OBJET ADRESSE
+				  CE QUI FAIT QUE CETTE RELATION EST UNIDIRECTIONNELLE.
+			-->
+			<one-to-one name="adresse">
+				<join-column name="adresseCol" referenced-column-name="id" />
+			</one-to-one>
+			
+			
+		</attributes>
+	</entity>
+	
+	<!-- ******************* ENTITE ADRESSE ******************* -->
+	<entity class="fr.gtm.projetv3.model.Adresse">
+		<table name="adresse" />
+		<attributes>
+
+			<id name="id">
+				<generated-value strategy="IDENTITY" />
+			</id>
+	
+			<basic name="codePostal" />
+			<basic name="ville" />
+			<basic name="nomRue" />
+			<basic name="numRue" />
+			<basic name="pays" />
+			<basic name="adresseOpt" />
+			
+		</attributes>
+	</entity>
+	
+	<!-- ******************* ENTITE COMPTE ******************* -->
+	<entity class="fr.gtm.projetv3.model.Compte">
+		<table name="compte" />
+		<attributes>
+
+			<id name="id">
+				<generated-value strategy="IDENTITY" />
+			</id>
+
+			<basic name="numCC" />
+			<basic name="libeller" />
+			<basic name="dateOuverture" />
+			<basic name="solde" />
+			<basic name="typeCompte" />
+
+			<many-to-one name="client">
+				<join-column name="clientId" referenced-column-name="id" />
+			</many-to-one>
+			
+			<one-to-one name="cb">
+				<join-column name="carteBleueCol" referenced-column-name="id" />
+			</one-to-one>
+		
+			<one-to-one name="cheque">
+				<join-column name="idCheque" referenced-column-name="id" />
+			</one-to-one>
+			
+			
+		</attributes>
+	</entity>
+	
+	<!-- ********************** ENTITE CARTE BLEUE *********************** -->
+	<entity class="fr.gtm.projetv3.model.CarteBleue">
+		<table name="cartebleue" />
+		<attributes>
+
+			<id name="id">
+				<generated-value strategy="IDENTITY" />
+			</id>
+
+			<basic name="numeroCarte" />
+			<basic name="dateExpiration" />
+			<basic name="type" />
+
+		</attributes>
+	</entity>
+	
+	<!-- ********************** ENTITE CHEQUE *********************** -->
+	<entity class="fr.gtm.projetv3.model.Chequier">
+		<table name="chequier" />
+		<attributes>
+
+			<id name="id">
+				<generated-value strategy="IDENTITY" />
+			</id>
+
+			<basic name="dateEnvoi" />
+			<basic name="dateReception" />
+
+		</attributes>
+	</entity>
+	
+</entity-mappings>
